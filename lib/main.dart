@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mutual_project/colors/mutual_colors.dart';
+import 'package:mutual_project/providers/location_provider.dart';
 import 'package:mutual_project/providers/login_form_provider.dart';
 import 'package:mutual_project/screens/home_screen.dart';
 import 'package:mutual_project/screens/login_screen.dart';
@@ -17,6 +18,7 @@ class AppState extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => LoginFormProvider()),
+        ChangeNotifierProvider(create: (_) => LocationProvider()),
       ],
       child: const MyApp(),
     );

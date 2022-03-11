@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mutual_project/providers/location_provider.dart';
+import 'package:provider/provider.dart';
 
 class OptionsScreen extends StatefulWidget {
   const OptionsScreen({Key? key}) : super(key: key);
@@ -136,7 +138,8 @@ class _OptionsScreenState extends State<OptionsScreen> {
                 TextButton(
                     onPressed: () async {
                       final argumento = await calcularLatLng(address);
-                      Navigator.pushReplacementNamed(context, 'home',
+                      await initLocation(context);
+                      Navigator.pushNamed(context, 'home',
                           arguments: argumento);
                     },
                     child: const Text('Localizar')),
@@ -156,4 +159,15 @@ Future<LatLng> calcularLatLng(String ciudad) async {
   lng = locations[0].longitude;
 
   return LatLng(lat, lng);
+}
+
+Future<void> initLocation(context) async {
+  final locationProvider =
+      Provider.of<LocationProvider>(context, listen: false);
+
+  await locationProvider.enableService();
+  await locationProvider.askPermission();
+  await locationProvider.getActualLocation();
+
+  return;
 }
