@@ -39,7 +39,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                   showCities: true,
 
                   ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
-                  flagState: CountryFlag.ENABLE,
+                  flagState: CountryFlag.DISABLE,
 
                   ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
                   dropdownDecoration: BoxDecoration(
