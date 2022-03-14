@@ -15,6 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final LatLng address = ModalRoute.of(context)!.settings.arguments as LatLng;
+
     // Marcadores
     Set<Marker> markers = <Marker>{};
     markers.add(Marker(
@@ -27,9 +28,10 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Mapa'),
       ),
       body: GoogleMap(
+        myLocationEnabled: true,
         markers: markers,
         mapType: MapType.normal,
-        initialCameraPosition: CameraPosition(target: address, zoom: 16),
+        initialCameraPosition: CameraPosition(target: address, zoom: 12),
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
         },
