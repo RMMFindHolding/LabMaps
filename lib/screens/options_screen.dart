@@ -56,7 +56,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                       final argumento = await calcularLatLng(address);
                       if(argumento != null) {
                         _controller.clear();
-                        // await initLocation(context);
+                        await initLocation(context);
                         Navigator.pushNamed(context, 'home',
                           arguments: argumento);
                       } else {
@@ -96,8 +96,8 @@ Future<void> initLocation(context) async {
   final locationProvider =
       Provider.of<LocationProvider>(context, listen: false);
 
-  // await locationProvider.enableService();
-  // await locationProvider.askPermission();
+  await locationProvider.enableService();
+  await locationProvider.askPermission();
   await locationProvider.getActualLocation();
 
   return;

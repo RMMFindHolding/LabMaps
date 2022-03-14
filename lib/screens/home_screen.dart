@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:location/location.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -13,7 +15,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   final Completer<GoogleMapController> _controller = Completer();
+  Location location = Location();
+  late LocationData _currentPosition;
 
   Future<Uint8List> getBytesFromAsset({required String path,required int width})async {
     ByteData data = await rootBundle.load(path);
@@ -25,6 +30,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return (await fi.image.toByteData(
       format: ui.ImageByteFormat.png))!
     .buffer.asUint8List();
+  }
+
+  LatLng? actualLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    getLoc();
   }
 
   @override
@@ -46,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
 
     markers.add(const Marker(
-      markerId:  MarkerId('Hospital Italiano'),
+      markerId:  MarkerId('Hospital Italiano segurola 3860'),
       position: LatLng(-34.62776695111983, -58.45523956970974),
       infoWindow: InfoWindow(title: 'Hospital Italiano', snippet: 'Av. Carabobo 148, C1406 DGO, Buenos Aires'),
     ));
@@ -66,6 +79,22 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mapa'),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final GoogleMapController controller = await _controller.future;
+              controller.animateCamera(
+                CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                    target: actualLocation == null ? address : actualLocation!,
+                    zoom: 16
+                  )
+                )
+              );
+            }, 
+            icon: const Icon(Icons.location_on)
+          )
+        ],
       ),
       body: GoogleMap(
         myLocationEnabled: true,
@@ -78,4 +107,30 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  getLoc() async{
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _currentPosition = await location.getLocation();
+    actualLocation = LatLng(_currentPosition.latitude!, _currentPosition.longitude!);
+  }
+
+
 }
